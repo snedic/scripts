@@ -39,8 +39,8 @@ final_msg="${final_msg}\n\tJava 11 installed"
 
 # download hadoop
 printf "\n\n${hdr_pad}\nDownloading Hadoop (version ${hadoop_version})\n${hdr_pad}\n"
-#wget https://dlcdn.apache.org/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}.tar.gz -P ~/Downloads
-#wget https://dlcdn.apache.org/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}.tar.gz.sha512 -P ~/Downloads
+wget https://dlcdn.apache.org/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}.tar.gz -P ~/Downloads
+wget https://dlcdn.apache.org/hadoop/common/hadoop-${hadoop_version}/hadoop-${hadoop_version}.tar.gz.sha512 -P ~/Downloads
 final_msg="${final_msg}\n\tHadoop ${hadoop_version} downloaded (~/Downloads/hadoop-${hadoop_version}.tar.gz)"
 
 
