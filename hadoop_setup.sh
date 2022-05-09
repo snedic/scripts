@@ -223,6 +223,54 @@ if [ $pseudo_distributed == "Y" ] || [ $pseudo_distributed == "y" ] || [ ${pseud
 fi
 
 
+# Configure System Service
+read -p "Would you like to setup HDFS to autostart as a system service? [Y/n] " hadoop_service
+if [ $hadoop_service == "Y" ] || [ $hadoop_service == "y" ] || [ ${hadoop_service,,} == "yes" ]; then
+	printf "\n\n${hdr_pad}\nConfiguring HDFS Service\n${hdr_pad}\n"
+
+
+	final_msg="${final_msg}\nConfigured HDFS Service:"
+
+	# Add configuration properties
+	printf "[Unit]
+		Description=Hadoop DFS namenode and datanode
+[Service]
+	User=$USER
+	Group=$USER
+	Type=simple
+	PIDFile=/var/run/hdfs.pid
+	Environment='PATH=${PATH}:${hadoop_home}/bin/:${hadoop_home}/sbin/:/user/local/bin/'
+	Environment='PDSH_RCMD_TYPE=ssh'
+	ExecStart=${hadoop_home}/sbin/start-dfs.sh
+	ExecStop=${hadoop_home}/sbin/stop-dfs.sh
+	WorkingDirectory=${hadoop_home}
+	Restart=always
+[Install]
+	WantedBy=multi-user.target
+	" > hadoop.service
+
+	# setup jupyter lab service
+	sudo chmod 777 hadoop.service
+	sudo mv hadoop.service /lib/systemd/system/
+	sudo systemctl daemon-reload
+	sudo systemctl start hadoop
+	#sudo systemctl status hadoop
+
+	# look for the jupyter service
+	ps -ef | grep hadoop
+
+	# enable the jupyter service
+	sudo systemctl enable hadoop
+
+	#
+	echo "if you see the hadoop service, reboot the machine [sudo reboot]"
+
+	final_msg="${final_msg}\n\tsudo systemctl status hadoop"
+fi
+
+#################
+# End of Script #
+#################
 final_msg="${final_msg}\n\n Commands to be aware of:\n\thdfs\n\thadoop\n\tstart-dfs.sh\n\tstart-all.sh\n\tstop-dfs.sh\n\tstop-all.sh\n\tjps"
 printf "\n${hdr_pad}\nSCRIPT COMLETED SUCCESSFULLY\n${hdr_pad}\n${final_msg}\n"
 
